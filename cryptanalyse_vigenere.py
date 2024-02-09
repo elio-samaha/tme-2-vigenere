@@ -152,10 +152,18 @@ def clef_par_decalages(cipher, key_length):
 # Cryptanalyse V1 avec décalages par frequence max
 def cryptanalyse_v1(cipher):
     """
-    Documentation à écrire
+    cryptanalyse et dechiffre le message par la methode suivante : On trouve la longeur de clef avec la meilleure IC puis on trouve le decalage de chaque colonne 
     """
-    return "TODO"
+    key_length = longueur_clef(cipher)
+    key = clef_par_decalages(cipher , key_length)
 
+    return dechiffre_vigenere(cipher , key)
+
+#Question 9 : 18 tests avec success parmi 100, c'est faible pour plusieurs raisons : on a pas toujours forcement un lien direct entre la frequence max de la lettre dans le cipher et le e 
+# car ce sont des statistiques faites sur un grand ensemble de donnés donc pour de petits textes cela ne reste pas vraie.
+# (de meme qu on peut avoir plusieurs lettre de frequence max et nous on prend la plus petite.. pas toujours vraie). De meme il se peut que la clef soit de longueure plus grand que 20
+# vu que prendre la plus petite clef qui donne une IC plus grande que 0.06 ne soit pas toujours la bonne solution mais entrainera que ces multiples auront une bonne valeure aussi 
+# (ex : si on a un bon IC pour 7 on aura pour 14 mais si 21 ne donne pas une bonne IC mais 28 le donne donc 14 est meilleur que 7, un cas qu on ne prend pas en compte). <--- A verifier !!
 
 ################################################################
 
