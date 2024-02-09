@@ -127,7 +127,7 @@ def longueur_clef(cipher):
             IC = mean([indice_coincidence(freq(e)) for e in li]) #moyenne des IC pour chaque colonne
             if IC > 0.06 : 
                 return key 
-    return -1
+    return 0
 
 
 # Renvoie le tableau des décalages probables étant
@@ -136,11 +136,19 @@ def longueur_clef(cipher):
 # de chaque colonne
 def clef_par_decalages(cipher, key_length):
     """
-    Documentation à écrire
+    rend une liste contenant la clef i.e chaque element i de la liste est le decalage de la colonne i
     """
     decalages=[0]*key_length
+    
+    li = [[] for _ in range(key_length)] # chaque element de la liste est une colonne 
+    for ind , let in enumerate(cipher):
+        li[ind % key_length].append(let)           #mettre les elements selon leur module avec key 
+    li = ["".join(e) for e in li]   #conversion en liste de chaine de charactere
+    for i in range(key_length):
+        decalages[i] = (lettre_freq_max(li[i]) - 4) % 26                # E ---> µ donc dec = µ - E mod 26  
+        
     return decalages
-
+     
 # Cryptanalyse V1 avec décalages par frequence max
 def cryptanalyse_v1(cipher):
     """
