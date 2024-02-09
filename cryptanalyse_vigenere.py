@@ -1,10 +1,11 @@
 # Sorbonne Université 3I024 2023-2024
 # TME 2 : Cryptanalyse du chiffre de Vigenere
 #
-# Etudiant.e 1 : NOM ET NUMERO D'ETUDIANT
+# Etudiant.e 1 : Samaha Elio 21105733
 # Etudiant.e 2 : NOM ET NUMERO D'ETUDIANT
 
 import sys, getopt, string, math
+from collections import Counter
 
 # Alphabet français
 alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -13,19 +14,35 @@ alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 # À modifier
 freq_FR = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
+def freq(file):
+    Occurences = {}
+    with open(file, "r") as f:
+        s = f.read().strip()
+
+    Occurences = Counter(s)
+    length = len(s)
+    Occurences = {k:v/length for k,v in Occurences.items()}
+    return Occurences
+
+freq_FR = freq("germinal_nettoye")
+#print(freq_FR)
+
+
 # Chiffrement César
 def chiffre_cesar(txt, key):
     """
-    Documentation à écrire
+    chiffre par cesar chaque lettre du texte txt par la clef key et puis renvoie le texte chiffré regroupé ensemble.
     """
-    return txt
+    return ''.join([chr((((ord(e) - ord("A")) + key) % 26) + ord("A")) if e.isupper() else chr((((ord(e) - ord("a")) + key) % 26) + ord("a")) for e in txt])
 
 # Déchiffrement César
 def dechiffre_cesar(txt, key):
     """
-    Documentation à écrire
+    déchiffre par cesar chaque lettre du texte txt par la clef key et puis renvoie le texte déchiffré regroupé ensemble.
     """
-    return txt
+    return ''.join([chr((((ord(e) - ord("A")) - key) % 26) + ord("A")) if e.isupper() else chr((((ord(e) - ord("a")) - key) % 26) + ord("a")) for e in txt])
+
+#                 print(dechiffre_cesar(chiffre_cesar(...)))
 
 # Chiffrement Vigenere
 def chiffre_vigenere(txt, key):
