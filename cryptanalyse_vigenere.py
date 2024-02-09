@@ -6,7 +6,6 @@
 
 import sys, getopt, string, math
 from collections import Counter
-import numpy as np
 
 # Alphabet français
 alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -14,6 +13,9 @@ alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 # Fréquence moyenne des lettres en français
 # À modifier
 freq_FR = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+def mean(li):
+    return sum(li)/len(li)
 
 def frequence(file):
     Occurences = {}
@@ -113,7 +115,7 @@ def indice_coincidence(hist):
 # Recherche la longueur de la clé
 def longueur_clef(cipher):
     """
-    Documentation à écrire
+    donne la bonne longueur de la clef grace au IC
     """
     n = len(cipher)
     for key in range(1 , 21):
@@ -122,7 +124,7 @@ def longueur_clef(cipher):
             for ind , let in enumerate(cipher):
                 li[ind % key].append(let)           #mettre les elements selon leur module avec key 
             li = ["".join(e) for e in li]   #conversion en liste de chaine de charactere
-            IC = np.mean([indice_coincidence(freq(e)) for e in li]) #moyenne des IC pour chaque colonne
+            IC = mean([indice_coincidence(freq(e)) for e in li]) #moyenne des IC pour chaque colonne
             if IC > 0.06 : 
                 return key 
     return -1
