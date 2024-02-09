@@ -6,6 +6,7 @@
 
 import sys, getopt, string, math
 from collections import Counter
+import numpy as np
 
 # Alphabet français
 alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -14,7 +15,7 @@ alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 # À modifier
 freq_FR = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
-def freq(file):
+def frequence(file):
     Occurences = {}
     with open(file, "r") as f:
         s = f.read().strip()
@@ -24,7 +25,7 @@ def freq(file):
     Occurences = {k:v/length for k,v in Occurences.items()}
     return Occurences
 
-freq_FR = freq("germinal_nettoye")
+freq_FR = frequence("germinal_nettoye")
 #print(freq_FR)
 
 
@@ -42,52 +43,91 @@ def dechiffre_cesar(txt, key):
     """
     return ''.join([chr((((ord(e) - ord("A")) - key) % 26) + ord("A")) if e.isupper() else chr((((ord(e) - ord("a")) - key) % 26) + ord("a")) for e in txt])
 
-#                 print(dechiffre_cesar(chiffre_cesar(...)))
 
 # Chiffrement Vigenere
 def chiffre_vigenere(txt, key):
     """
-    Documentation à écrire
+    chiffre avc vigenere le texte "xxx" avec la clef key qui est une liste contenant chaque decalage de chque colonne : key[i] = decalage de ma colonne i"
     """
-    return txt
+    res = ['' for _ in range(len(txt))]
+    n = len(key)
+    for j in range(n): # parcours les clef
+        d = key[j] #prend la valeur de decalage
+        i = j # commence a la bonne position selon l indice de la clef
+        while i < len(txt):
+            res[i] = chr((((ord(txt[i]) - ord("A")) + d) % 26) + ord("A"))
+            i += n #saute de n car on chiffre ici colonne par colonne
+
+    return "".join(res)
+
+#Question N : pour repondre au question
 
 # Déchiffrement Vigenere
 def dechiffre_vigenere(txt, key):
     """
-    Documentation à écrire
+    dechiffre avc vigenere le texte "xxx" avec la clef key qui est une liste contenant chaque decalage de chque colonne : key[i] = decalage de ma colonne i"
     """
-    return txt
+    res = ['' for _ in range(len(txt))]
+    n = len(key)
+    for j in range(n): # parcours les clef
+        d = key[j] #prend la valeur de decalage
+        i = j # commence a la bonne position selon l indice de la clef
+        while i < len(txt):
+            res[i] = chr((((ord(txt[i]) - ord("A")) - d) % 26) + ord("A"))
+            i += n #saute de n car on chiffre ici colonne par colonne
+
+    return "".join(res)
 
 # Analyse de fréquences
 def freq(txt):
     """
-    Documentation à écrire
+    rend la liste des occurences des lettre de l alphabet dans le texte txt
     """
+    Occurences = Counter(txt)
     hist=[0.0]*len(alphabet)
+    for i , lettre in enumerate(alphabet): # indice , lettre
+        hist[i] = Occurences[lettre]
     return hist
 
 # Renvoie l'indice dans l'alphabet
 # de la lettre la plus fréquente d'un texte
 def lettre_freq_max(txt):
     """
-    Documentation à écrire
+    donne  l indice de l element qui a le nombre d'occurence maximale
     """
-    return 0
+    occ = freq(txt)
+    m = max(occ)
+    for i , l in enumerate(occ):
+        if l == m:
+            return i
+    return -1
 
 # indice de coïncidence
 def indice_coincidence(hist):
     """
-    Documentation à écrire
+    rend l'indice de coincidence d'un texte avec hist comme occurence des lettres
     """
-    return 0.0
+    n = sum(hist)
+    return sum([(ni * (ni - 1))/(n*(n-1)) for ni in hist]) if n != 0 else -1
 
 # Recherche la longueur de la clé
 def longueur_clef(cipher):
     """
     Documentation à écrire
     """
-    return 0
-    
+    n = len(cipher)
+    for key in range(1 , 21):
+        if key != 0:
+            li = [[] for _ in range(key)] # chaque element de la liste est une colonne 
+            for ind , let in enumerate(cipher):
+                li[ind % key].append(let)           #mettre les elements selon leur module avec key 
+            li = ["".join(e) for e in li]   #conversion en liste de chaine de charactere
+            IC = np.mean([indice_coincidence(freq(e)) for e in li]) #moyenne des IC pour chaque colonne
+            if IC > 0.06 : 
+                return key 
+    return -1
+
+
 # Renvoie le tableau des décalages probables étant
 # donné la longueur de la clé
 # en utilisant la lettre la plus fréquente
